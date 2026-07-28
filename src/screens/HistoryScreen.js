@@ -83,7 +83,7 @@ export default function HistoryScreen({ navigation }) {
               onLongPress={() => onDelete(item)}
             >
               <Text style={styles.cardTitle}>
-                🐶 {item.dogName} · {formatDate(item.endedAt || item.startedAt)}
+                🐩 {item.dogName} · {formatDate(item.endedAt || item.startedAt)}
               </Text>
               <Text style={styles.cardMeta}>
                 {formatDistance(item.distanceMeters || 0)} ·{' '}

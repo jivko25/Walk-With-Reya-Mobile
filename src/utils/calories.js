@@ -5,7 +5,7 @@
  * kcal ≈ weightKg × distanceKm × paceFactor
  */
 export function estimateDogCalories({ weightKg, distanceMeters, durationMs }) {
-  const weight = Math.max(1, Number(weightKg) || 15);
+  const weight = Math.max(1, Number(weightKg) || 5);
   const distanceKm = Math.max(0, distanceMeters) / 1000;
   const hours = Math.max(durationMs, 1000) / (1000 * 60 * 60);
   const speedKmh = hours > 0 ? distanceKm / hours : 0;

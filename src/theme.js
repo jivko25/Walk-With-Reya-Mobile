@@ -1,16 +1,19 @@
 export const colors = {
-  cream: '#FFF6E8',
-  softCream: '#FFEFD6',
-  peach: '#F6C28B',
-  caramel: '#D4A373',
-  cocoa: '#8B5E3C',
-  chocolate: '#5C3A21',
-  pawBrown: '#A67C52',
-  softOrange: '#F4A261',
-  warmCoral: '#E07A5F',
+  // Apricot poodle palette — soft peachy apricot like Reya's coat
+  cream: '#FFF8F1',
+  softCream: '#FFE9D6',
+  peach: '#F4C09A',
+  caramel: '#E0A074',
+  cocoa: '#8B5A3C',
+  chocolate: '#5A3722',
+  pawBrown: '#B07A52',
+  softOrange: '#E8A074',
+  warmCoral: '#E08B6B',
+  apricot: '#F0B48A',
+  apricotDeep: '#D4895C',
   grass: '#7CB518',
-  sky: '#A8D5E5',
-  white: '#FFFDF8',
+  sky: '#B7D8E8',
+  white: '#FFFDF9',
   softRed: '#E76F51',
   softGreen: '#6A994E',
 };
@@ -21,4 +24,11 @@ export const spacing = {
   md: 16,
   lg: 24,
   xl: 32,
+};
+
+export const dogProfile = {
+  defaultName: 'Рея',
+  breed: 'пудел',
+  colorName: 'априкот',
+  defaultWeightKg: 5,
 };

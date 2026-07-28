@@ -50,7 +50,7 @@ export default function SummaryScreen({ navigation, route }) {
     <SafeAreaView style={styles.safe}>
       <ScrollView contentContainerStyle={styles.content}>
         <DogBanner
-          title="Браво, кученца!"
+          title="Браво, пуделче!"
           subtitle={`${dogName} свърши страхотна разходка. Ето какво направихте заедно.`}
         />
 
@@ -61,7 +61,7 @@ export default function SummaryScreen({ navigation, route }) {
 
         <View style={styles.stats}>
           <StatBubble emoji="🔥" label="Калории (прибл.)" value={`${calories} kcal`} />
-          <StatBubble emoji="🐕" label="Темпо" value={pace} />
+          <StatBubble emoji="🐩" label="Темпо" value={pace} />
         </View>
 
         {path.length > 1 ? (

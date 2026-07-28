@@ -13,11 +13,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { DogBanner } from '../components/DogBanner';
 import { PawButton } from '../components/PawButton';
 import { loadActiveWalk } from '../services/walkStorage';
-import { colors, spacing } from '../theme';
+import { colors, dogProfile, spacing } from '../theme';
 
 export default function HomeScreen({ navigation }) {
-  const [dogName, setDogName] = useState('Рея');
-  const [weightKg, setWeightKg] = useState('15');
+  const [dogName, setDogName] = useState(dogProfile.defaultName);
+  const [weightKg, setWeightKg] = useState(String(dogProfile.defaultWeightKg));
   const [activeWalk, setActiveWalk] = useState(null);
 
   useFocusEffect(
@@ -28,8 +28,8 @@ export default function HomeScreen({ navigation }) {
         if (alive) {
           setActiveWalk(walk?.active ? walk : null);
           if (walk?.active) {
-            setDogName(walk.dogName || 'Рея');
-            setWeightKg(String(walk.weightKg || 15));
+            setDogName(walk.dogName || dogProfile.defaultName);
+            setWeightKg(String(walk.weightKg || dogProfile.defaultWeightKg));
           }
         }
       })();
@@ -42,16 +42,17 @@ export default function HomeScreen({ navigation }) {
   const onStart = () => {
     const weight = parseFloat(String(weightKg).replace(',', '.'));
     navigation.navigate('Walk', {
-      dogName: dogName.trim() || 'Кучето',
-      weightKg: Number.isFinite(weight) && weight > 0 ? weight : 15,
+      dogName: dogName.trim() || dogProfile.defaultName,
+      weightKg:
+        Number.isFinite(weight) && weight > 0 ? weight : dogProfile.defaultWeightKg,
     });
   };
 
   const onContinue = () => {
     if (!activeWalk) return;
     navigation.navigate('Walk', {
-      dogName: activeWalk.dogName || 'Кучето',
-      weightKg: activeWalk.weightKg || 15,
+      dogName: activeWalk.dogName || dogProfile.defaultName,
+      weightKg: activeWalk.weightKg || dogProfile.defaultWeightKg,
       resume: true,
     });
   };
@@ -65,14 +66,15 @@ export default function HomeScreen({ navigation }) {
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
           <DogBanner
             title="Разходка с Рея"
-            subtitle="Натисни бутона и тръгвайте заедно — следим пътечката ви като верни лапички."
+            subtitle="Малкото ни априкот пуделче е готово за приключение. Натисни бутона и тръгвайте заедно."
           />
 
           {activeWalk ? (
             <View style={styles.activeBox}>
               <Text style={styles.activeTitle}>Има незавършена разходка</Text>
               <Text style={styles.activeText}>
-                С {activeWalk.dogName || 'кучето'} — можеш да продължиш откъдето спряхте.
+                С {activeWalk.dogName || dogProfile.defaultName} — можеш да продължиш откъдето
+                спряхте.
               </Text>
               <PawButton title="Продължи разходката" onPress={onContinue} />
               <View style={styles.gap} />
@@ -86,7 +88,7 @@ export default function HomeScreen({ navigation }) {
             <TextInput
               value={dogName}
               onChangeText={setDogName}
-              placeholder="Рея"
+              placeholder={dogProfile.defaultName}
               placeholderTextColor={colors.pawBrown}
               style={styles.input}
             />
@@ -96,20 +98,21 @@ export default function HomeScreen({ navigation }) {
               value={weightKg}
               onChangeText={setWeightKg}
               keyboardType="decimal-pad"
-              placeholder="15"
+              placeholder={String(dogProfile.defaultWeightKg)}
               placeholderTextColor={colors.pawBrown}
               style={styles.input}
             />
 
             <Text style={styles.hint}>
-              Теглото помага да сметнем приблизително колко калории е изгорило кучето.
-              Докато разходката тече, Android показва системна нотификация за следенето.
+              Рея е малък {dogProfile.colorName} {dogProfile.breed} — теглото помага за
+              приблизителните калории. Докато разходката тече, Android показва системна
+              нотификация за следенето.
             </Text>
           </View>
 
           <View style={styles.tipsBox}>
             <Text style={styles.tipsTitle}>Преди да тръгнете</Text>
-            <Text style={styles.tipLine}>🦴 Вземете вода за по-дълги разходки</Text>
+            <Text style={styles.tipLine}>🦴 Вземете вода — пуделчетата се прегряват лесно</Text>
             <Text style={styles.tipLine}>🐾 Проверете лапичките и нашийника</Text>
             <Text style={styles.tipLine}>🌳 Изберете сенчесто местенце в жега</Text>
           </View>

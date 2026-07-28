@@ -143,8 +143,8 @@ export async function startBackgroundWalk({ dogName, weightKg }) {
   const walk = {
     id: `walk_${now}`,
     active: true,
-    dogName: dogName || 'Кучето',
-    weightKg: weightKg || 15,
+    dogName: dogName || 'Рея',
+    weightKg: weightKg || 5,
     startedAt: now,
     updatedAt: now,
     distanceMeters: 0,

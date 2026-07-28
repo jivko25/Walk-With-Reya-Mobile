@@ -13,7 +13,7 @@ module.exports = {
     splash: {
       image: './assets/splash-icon.png',
       resizeMode: 'contain',
-      backgroundColor: '#FFF6E8',
+      backgroundColor: '#FFF8F1',
     },
     ios: {
       supportsTablet: true,
@@ -34,7 +34,7 @@ module.exports = {
     android: {
       package: 'com.walkwithreya.app',
       adaptiveIcon: {
-        backgroundColor: '#FFF6E8',
+        backgroundColor: '#FFF8F1',
         foregroundImage: './assets/android-icon-foreground.png',
         backgroundImage: './assets/android-icon-background.png',
         monochromeImage: './assets/android-icon-monochrome.png',

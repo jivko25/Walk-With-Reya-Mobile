@@ -4,7 +4,7 @@ import { colors } from '../theme';
 export function DogBanner({ title, subtitle }) {
   return (
     <View style={styles.wrap}>
-      <Text style={styles.bones}>🦴  🐶  🦴</Text>
+      <Text style={styles.bones}>🦴  🐩  🦴</Text>
       <Text style={styles.title}>{title}</Text>
       {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
     </View>
