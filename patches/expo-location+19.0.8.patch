@@ -1,0 +1,37 @@
+diff --git a/node_modules/expo-location/android/src/main/java/expo/modules/location/services/LocationTaskService.kt b/node_modules/expo-location/android/src/main/java/expo/modules/location/services/LocationTaskService.kt
+index 1111111..2222222 100644
+--- a/node_modules/expo-location/android/src/main/java/expo/modules/location/services/LocationTaskService.kt
++++ b/node_modules/expo-location/android/src/main/java/expo/modules/location/services/LocationTaskService.kt
+@@ -72,13 +72,10 @@ class LocationTaskService : Service() {
+     val body = serviceOptions.getString("notificationBody")
+     val color = colorStringToInteger(serviceOptions.getString("notificationColor"))
+ 
+     title?.let { builder.setContentTitle(title) }
+     body?.let { builder.setContentText(body) }
+-    color?.let {
+-      builder.setColorized(true).setColor(color)
+-    } ?: run {
+-      builder.setColorized(false)
+-    }
++    // Do NOT call setColorized(true) — it crashes many Android builds for normal service notifications.
++    color?.let { builder.setColor(it) }
+ 
+     mParentContext.packageManager.getLaunchIntentForPackage(mParentContext.packageName)?.let {
+       it.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+@@ -89,10 +86,16 @@ class LocationTaskService : Service() {
+     }
+ 
+     return builder.setCategory(Notification.CATEGORY_SERVICE)
+-      .setSmallIcon(applicationInfo.icon)
++      .setSmallIcon(resolveSmallIcon())
+       .build()
+   }
+ 
++  private fun resolveSmallIcon(): Int {
++    val customIcon = resources.getIdentifier("notification_icon", "drawable", packageName)
++    return if (customIcon != 0) customIcon else applicationInfo.icon
++  }
++
+   @TargetApi(26)
+   private fun prepareChannel(id: String?) {
+     val notificationManager = getSystemService(NOTIFICATION_SERVICE) as? NotificationManager
