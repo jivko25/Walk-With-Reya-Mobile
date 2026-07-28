@@ -89,6 +89,8 @@ export function buildWalkSummary(walk, { endedReason = 'manual' } = {}) {
   return {
     id: walk.id || `walk_${endedAt}`,
     dogName: walk.dogName || 'Рея',
+    breed: walk.breed || null,
+    ageYears: walk.ageYears || null,
     weightKg: walk.weightKg || 5,
     route: walk.route || [],
     distanceMeters,

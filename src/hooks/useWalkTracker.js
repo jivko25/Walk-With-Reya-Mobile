@@ -76,7 +76,7 @@ export function useWalkTracker() {
   }, [clearForegroundWatch]);
 
   const startWalk = useCallback(
-    async ({ dogName, weightKg }) => {
+    async ({ dogName, weightKg, breed, ageYears }) => {
       setError(null);
       endingRef.current = false;
 
@@ -84,6 +84,8 @@ export function useWalkTracker() {
         const { walk, backgroundStarted: bgOk } = await startBackgroundWalk({
           dogName,
           weightKg,
+          breed,
+          ageYears,
         });
 
         setBackgroundStarted(bgOk);

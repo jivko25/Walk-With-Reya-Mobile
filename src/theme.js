@@ -28,7 +28,7 @@ export const spacing = {
 
 export const dogProfile = {
   defaultName: 'Рея',
-  breed: 'пудел',
-  colorName: 'априкот',
+  defaultBreed: 'Пудел',
+  defaultAgeYears: 2,
   defaultWeightKg: 5,
 };

@@ -10,28 +10,37 @@ import {
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { BreedPicker } from '../components/BreedPicker';
 import { DogBanner } from '../components/DogBanner';
 import { PawButton } from '../components/PawButton';
+import { DEFAULT_DOG_PROFILE } from '../data/dogBreeds';
+import {
+  loadDogProfile,
+  normalizeDogProfileInput,
+  saveDogProfile,
+} from '../services/dogProfileStorage';
 import { loadActiveWalk } from '../services/walkStorage';
-import { colors, dogProfile, spacing } from '../theme';
+import { colors, spacing } from '../theme';
 
 export default function HomeScreen({ navigation }) {
-  const [dogName, setDogName] = useState(dogProfile.defaultName);
-  const [weightKg, setWeightKg] = useState(String(dogProfile.defaultWeightKg));
+  const [dogName, setDogName] = useState(DEFAULT_DOG_PROFILE.name);
+  const [breed, setBreed] = useState(DEFAULT_DOG_PROFILE.breed);
+  const [ageYears, setAgeYears] = useState(DEFAULT_DOG_PROFILE.ageYears);
+  const [weightKg, setWeightKg] = useState(DEFAULT_DOG_PROFILE.weightKg);
   const [activeWalk, setActiveWalk] = useState(null);
 
   useFocusEffect(
     useCallback(() => {
       let alive = true;
       (async () => {
-        const walk = await loadActiveWalk();
-        if (alive) {
-          setActiveWalk(walk?.active ? walk : null);
-          if (walk?.active) {
-            setDogName(walk.dogName || dogProfile.defaultName);
-            setWeightKg(String(walk.weightKg || dogProfile.defaultWeightKg));
-          }
-        }
+        const [profile, walk] = await Promise.all([loadDogProfile(), loadActiveWalk()]);
+        if (!alive) return;
+
+        setDogName(profile.name);
+        setBreed(profile.breed);
+        setAgeYears(profile.ageYears);
+        setWeightKg(profile.weightKg);
+        setActiveWalk(walk?.active ? walk : null);
       })();
       return () => {
         alive = false;
@@ -39,20 +48,37 @@ export default function HomeScreen({ navigation }) {
     }, [])
   );
 
-  const onStart = () => {
-    const weight = parseFloat(String(weightKg).replace(',', '.'));
+  const buildProfile = () =>
+    normalizeDogProfileInput({
+      name: dogName,
+      breed,
+      ageYears,
+      weightKg,
+    });
+
+  const onStart = async () => {
+    await saveDogProfile({
+      name: dogName,
+      breed,
+      ageYears,
+      weightKg,
+    });
+    const normalized = buildProfile();
     navigation.navigate('Walk', {
-      dogName: dogName.trim() || dogProfile.defaultName,
-      weightKg:
-        Number.isFinite(weight) && weight > 0 ? weight : dogProfile.defaultWeightKg,
+      dogName: normalized.name,
+      breed: normalized.breed,
+      ageYears: normalized.ageYears,
+      weightKg: normalized.weightKg,
     });
   };
 
   const onContinue = () => {
     if (!activeWalk) return;
     navigation.navigate('Walk', {
-      dogName: activeWalk.dogName || dogProfile.defaultName,
-      weightKg: activeWalk.weightKg || dogProfile.defaultWeightKg,
+      dogName: activeWalk.dogName || dogName || DEFAULT_DOG_PROFILE.name,
+      breed: activeWalk.breed || breed,
+      ageYears: activeWalk.ageYears || Number(ageYears) || 1,
+      weightKg: activeWalk.weightKg || Number(weightKg) || 5,
       resume: true,
     });
   };
@@ -65,16 +91,15 @@ export default function HomeScreen({ navigation }) {
       >
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
           <DogBanner
-            title="Разходка с Рея"
-            subtitle="Малкото ни априкот пуделче е готово за приключение. Натисни бутона и тръгвайте заедно."
+            title="Walk With Reya"
+            subtitle="Въведи данните на кучето и тръгвайте заедно — за всяка порода, с топли лапички."
           />
 
           {activeWalk ? (
             <View style={styles.activeBox}>
               <Text style={styles.activeTitle}>Има незавършена разходка</Text>
               <Text style={styles.activeText}>
-                С {activeWalk.dogName || dogProfile.defaultName} — можеш да продължиш откъдето
-                спряхте.
+                С {activeWalk.dogName || 'кучето'} — можеш да продължиш откъдето спряхте.
               </Text>
               <PawButton title="Продължи разходката" onPress={onContinue} />
               <View style={styles.gap} />
@@ -82,13 +107,26 @@ export default function HomeScreen({ navigation }) {
           ) : null}
 
           <View style={styles.card}>
-            <Text style={styles.cardTitle}>Кой тръгва днес?</Text>
+            <Text style={styles.cardTitle}>Данни за кучето</Text>
 
-            <Text style={styles.fieldLabel}>Име на кучето</Text>
+            <Text style={styles.fieldLabel}>Име</Text>
             <TextInput
               value={dogName}
               onChangeText={setDogName}
-              placeholder={dogProfile.defaultName}
+              placeholder="Рея"
+              placeholderTextColor={colors.pawBrown}
+              style={styles.input}
+            />
+
+            <Text style={styles.fieldLabel}>Порода</Text>
+            <BreedPicker value={breed} onChange={setBreed} />
+
+            <Text style={styles.fieldLabel}>Години</Text>
+            <TextInput
+              value={ageYears}
+              onChangeText={setAgeYears}
+              keyboardType="decimal-pad"
+              placeholder="2"
               placeholderTextColor={colors.pawBrown}
               style={styles.input}
             />
@@ -98,21 +136,20 @@ export default function HomeScreen({ navigation }) {
               value={weightKg}
               onChangeText={setWeightKg}
               keyboardType="decimal-pad"
-              placeholder={String(dogProfile.defaultWeightKg)}
+              placeholder="5"
               placeholderTextColor={colors.pawBrown}
               style={styles.input}
             />
 
             <Text style={styles.hint}>
-              Рея е малък {dogProfile.colorName} {dogProfile.breed} — теглото помага за
-              приблизителните калории. Докато разходката тече, Android показва системна
-              нотификация за следенето.
+              Теглото и възрастта помагат за приблизителните калории и съветите. Профилът се
+              запомня за следващия път.
             </Text>
           </View>
 
           <View style={styles.tipsBox}>
             <Text style={styles.tipsTitle}>Преди да тръгнете</Text>
-            <Text style={styles.tipLine}>🦴 Вземете вода — пуделчетата се прегряват лесно</Text>
+            <Text style={styles.tipLine}>🦴 Вземете вода за по-дълги разходки</Text>
             <Text style={styles.tipLine}>🐾 Проверете лапичките и нашийника</Text>
             <Text style={styles.tipLine}>🌳 Изберете сенчесто местенце в жега</Text>
           </View>

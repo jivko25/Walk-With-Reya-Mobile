@@ -111,7 +111,7 @@ export async function finalizeWalk({
   return summary;
 }
 
-export async function startBackgroundWalk({ dogName, weightKg }) {
+export async function startBackgroundWalk({ dogName, weightKg, breed, ageYears }) {
   const fg = await Location.requestForegroundPermissionsAsync();
   if (fg.status !== 'granted') {
     throw new Error('Нужно е разрешение за локация, за да следим разходката.');
@@ -144,6 +144,8 @@ export async function startBackgroundWalk({ dogName, weightKg }) {
     id: `walk_${now}`,
     active: true,
     dogName: dogName || 'Рея',
+    breed: breed || null,
+    ageYears: ageYears || null,
     weightKg: weightKg || 5,
     startedAt: now,
     updatedAt: now,

@@ -16,7 +16,7 @@ import { colors, spacing } from '../theme';
 import { formatDistance, formatDuration } from '../utils/geo';
 
 export default function WalkScreen({ navigation, route }) {
-  const { dogName, weightKg } = route.params;
+  const { dogName, weightKg, breed, ageYears } = route.params;
   const mapRef = useRef(null);
   const [starting, setStarting] = useState(true);
   const {
@@ -38,7 +38,7 @@ export default function WalkScreen({ navigation, route }) {
       try {
         const ok = route.params?.resume
           ? await resumeWalk()
-          : await startWalk({ dogName, weightKg });
+          : await startWalk({ dogName, weightKg, breed, ageYears });
         if (active) {
           setStarting(false);
           if (!ok && route.params?.resume) {
@@ -54,7 +54,7 @@ export default function WalkScreen({ navigation, route }) {
     return () => {
       active = false;
     };
-  }, [dogName, weightKg, navigation, resumeWalk, route.params?.resume, startWalk]);
+  }, [ageYears, breed, dogName, weightKg, navigation, resumeWalk, route.params?.resume, startWalk]);
 
   useEffect(() => {
     if (currentLocation && mapRef.current?.animateToRegion) {
